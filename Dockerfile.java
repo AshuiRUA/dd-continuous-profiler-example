@@ -1,7 +1,8 @@
-FROM openjdk:17
+FROM openjdk:11
 
 COPY . /home
 WORKDIR /home/java
-RUN curl -L -o dd-java-agent.jar 'http://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.datadoghq&a=dd-java-agent&v=latest'
+RUN wget https://github.com/DataDog/dd-trace-java/releases/download/v0.74.1/dd-java-agent-0.74.1.jar
 RUN ./gradlew --no-daemon installDist
-CMD JAVA_OPTS="-Ddd.agent.host=$DD_AGENT_HOST -Ddd.profiling.enabled=true -javaagent:dd-java-agent.jar" ./build/install/movies-api-java/bin/movies-api-java
+RUN chmod 777 dd-java-agent-0.74.1.jar
+CMD JAVA_OPTS="-Ddd.agent.host=$DD_AGENT_HOST -Ddd.profiling.enabled=true -javaagent:dd-java-agent-0.74.1.jar" ./build/install/movies-api-java/bin/movies-api-java
